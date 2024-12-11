@@ -43,7 +43,8 @@ class S2TSumary:
                 "data": pathlib.Path(audio_path).read_bytes()
             }
         ])
-        return response.text
+        
+        return response.text, response.usage_metadata
 
     def summarize_conversation(self, conversation):
         prompt = f"""From conversation in below, write review for each speaker: 
@@ -62,7 +63,8 @@ class S2TSumary:
                             generation_config=genai.types.GenerationConfig(
                                 temperature=0.7
                             ))
-        return response.text     
+        
+        return response.text, response.usage_metadata 
     
     def format_conversation(self, conversation):
         """
@@ -82,17 +84,18 @@ class S2TSumary:
 
     def run(self, audio_path):
         # Transcribe audio
-        transcription = self.transcribe_audio(audio_path)
+        transcription, token_usage_s2t = self.transcribe_audio(audio_path)
         pattern = r"```(.*?)```"
         conversation = re.search(pattern, transcription, re.DOTALL).group(1).strip()
         formatted_conversation = self.format_conversation(conversation)
-        res = self.summarize_conversation(conversation)
-        return conversation, res, formatted_conversation
+        res, token_usage_summary = self.summarize_conversation(conversation)
+        return conversation, res, formatted_conversation, token_usage_s2t, token_usage_summary
 
 
 
 if __name__ == "__main__":
-    res = S2TSumary().run('./test.wav')
+    key = os.getenv("GEMINI_API_KEY")
+    res, token_count = S2TSumary(apikey=key).run('./test.wav')
     print(res)
 
 # Example usage

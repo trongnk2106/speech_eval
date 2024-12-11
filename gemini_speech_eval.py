@@ -67,11 +67,11 @@ class EvaluateSpeech:
             # Extract and parse the JSON response
             # You might need to adjust this parsing based on Gemini's exact output format
             res_text = response.text.strip()
-            
+            token_usage = response.usage_metadata
             # Try to parse the JSON response
             try:
                 res = ast.literal_eval(res_text)
-                return res
+                return res, token_usage
             except (SyntaxError, ValueError):
                 # If direct parsing fails, you might need more sophisticated parsing
                 if "```json" in res_text:
@@ -79,7 +79,7 @@ class EvaluateSpeech:
                     res_text = res_text.split("```")[0]
                     res = ast.literal_eval(res_text)
                 # print(res_text)
-                return res
+                return res, token_usage
             
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -103,11 +103,12 @@ class EvaluateSpeech:
         }
         
         total_score = 0
+        list_token_usage = []
         for key, value in const_dict.items():
             system_prompt = dict_metric_prompt[key]
             user_prompt = self.generate_input(conversation)
-            res = self.eval_speech(user_prompt, system_prompt)
-            print(res)
+            res, token_usage = self.eval_speech(user_prompt, system_prompt)
+            list_token_usage.append((key, token_usage))
             if not res: 
                 while True: 
                     res = self.eval_speech(user_prompt, system_prompt)
@@ -122,7 +123,7 @@ class EvaluateSpeech:
             total_score += sum(scores) * score_dict[key]
         
         print(f"Total score: {total_score}")
-        return total_score
+        return total_score, list_token_usage
     
 
 

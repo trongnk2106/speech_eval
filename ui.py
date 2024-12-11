@@ -24,7 +24,7 @@ def run(audio_data):
     elif isinstance(audio_data, str):
         # breakpoint()
         audio_file = audio_data
-    conversation, sum_conv, scores, formatted_conversation = pipeline(audio_file, api_key=apikey)
+    conversation, sum_conv, scores, formatted_conversation, log_cost, total_cost = pipeline(audio_file, api_key=apikey)
     return conversation, sum_conv, scores
 
 

@@ -1,3 +1,10 @@
+cost_api = {
+    "input_token": 0.075 / 1000000,
+    "output_token": 0.3 / 1000000,
+    "cached_token": 0.01875 / 1000000,
+}
+
+
 communication_skill_expect = {
     "voice_tone": {
         "Tốc độ nói phù hợp": 3,
