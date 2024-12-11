@@ -108,7 +108,7 @@ class EvaluateSpeech:
             system_prompt = dict_metric_prompt[key]
             user_prompt = self.generate_input(conversation)
             res, token_usage = self.eval_speech(user_prompt, system_prompt)
-            list_token_usage.append((key, token_usage))
+            list_token_usage.append(token_usage)
             if not res: 
                 while True: 
                     res = self.eval_speech(user_prompt, system_prompt)
